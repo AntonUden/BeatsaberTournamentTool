@@ -47,7 +47,7 @@ export default function Leaderboard({ entryCount, showContact }: Props) {
 				:
 				<>
 					<tbody>
-						{topEntries.map((entry, index) => <LeaderboardEntry key={entry.uuid} placement={index} session={entry} showContact={showContact} />)}
+						{topEntries.map((entry, index) => <LeaderboardEntry key={entry.uuid} placement={index + 1} session={entry} showContact={showContact} />)}
 					</tbody>
 				</>
 			}

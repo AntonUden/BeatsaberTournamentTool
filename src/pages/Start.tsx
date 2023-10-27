@@ -13,7 +13,7 @@ export default function Start() {
 						</ListGroupItem>
 
 						<ListGroupItem>
-							<Link to="/live">Admin page</Link>
+							<Link to="/admin">Admin page</Link>
 						</ListGroupItem>
 					</ListGroup>
 				</Col>

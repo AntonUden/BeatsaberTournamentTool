@@ -3,6 +3,7 @@ import { useBeatsaberTournamentClient } from '../../scripts/context/BeatsaberCli
 import { Button, Col, Container, FormControl, FormLabel, InputGroup, Modal, ModalBody, ModalFooter, ModalHeader, ModalTitle, Row } from 'react-bootstrap';
 import UserData from '../../server/session/UserData';
 import toast from 'react-hot-toast';
+import SettingsMissmatchWarning from '../SettingsMissmatchWarning';
 
 interface Props {
 	visible: boolean;
@@ -70,6 +71,7 @@ export default function SaveSessionModal({ visible, onClose }: Props) {
 				<Container fluid>
 					<Row>
 						<Col>
+							<SettingsMissmatchWarning />
 							<FormLabel>Display name</FormLabel>
 							<FormControl type='text' placeholder='Display name' value={name} onChange={handleNameChange} />
 						</Col>

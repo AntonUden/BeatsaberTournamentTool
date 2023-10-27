@@ -11,3 +11,15 @@ export function sessionActiveWithScore(state: StateDTO) {
 
 	return true;
 }
+
+export function sessionInGame(state: StateDTO) {
+	if (state.current_session == null) {
+		return false;
+	}
+
+	if (state.current_session.level == null) {
+		return false;
+	}
+
+	return state.current_session.level.InLevel;
+}

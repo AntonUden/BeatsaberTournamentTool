@@ -5,6 +5,7 @@ import LeaderboardDTO from "../server/dto/LeaderboardDTO";
 import SavedSession from "../server/session/SavedSession";
 import EventEmitter from "../utils/EventEmitter";
 import UserData from "../server/session/UserData";
+import SavedSessionSorter from "../utils/SavedSessionSorter";
 
 export enum BeatsaberClientEvent {
 	STATE_CHANGED = "stateChanged",
@@ -19,7 +20,8 @@ export default class BeatsaberTournamentClient {
 	constructor() {
 		this._state = {
 			connected: false,
-			current_session: null
+			current_session: null,
+			locked_settings: null
 		};
 		this._leaderboard = [];
 
@@ -43,8 +45,9 @@ export default class BeatsaberTournamentClient {
 	async pollLeaderboard() {
 		const response = await axios.get("/api/sessions");
 		const newLeaderboard = response.data as LeaderboardDTO;
-		if (!deepCompareObject(newLeaderboard.sessions, this._leaderboard)) {
-			this._leaderboard = newLeaderboard.sessions;
+		const sessions = SavedSessionSorter.sortByBest(newLeaderboard.sessions);
+		if (!deepCompareObject(sessions, this._leaderboard)) {
+			this._leaderboard = sessions;
 			this.events.emit(BeatsaberClientEvent.LEADERBOARD_CHANGED, this._leaderboard);
 		}
 	}
@@ -71,5 +74,21 @@ export default class BeatsaberTournamentClient {
 			return true;
 		}
 		return false;
+	}
+
+	async clearLeaderboard() {
+		await axios.delete("/api/clear_leaderboard");
+	}
+
+	async lockSettings() {
+		const response = await axios.post("/api/lock_settings");
+		if (response.data.success == true) {
+			return true;
+		}
+		return false;
+	}
+
+	async clearSettings() {
+		await axios.delete("/api/clear_settings");
 	}
 }

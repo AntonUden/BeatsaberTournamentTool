@@ -5,24 +5,51 @@ import { useBeatsaberTournamentClient } from '../scripts/context/BeatsaberClient
 import StateDTO from '../server/dto/StateDTO';
 import { BeatsaberClientEvent } from '../scripts/BeatsaberTournamentClient';
 import CurrentScore from '../components/CurrentScore';
-import { sessionActiveWithScore } from '../scripts/SessionUtil';
+import { sessionActiveWithScore, sessionInGame } from '../scripts/SessionUtil';
 import HealthBar from '../components/HealthBar';
 import Leaderboard from '../components/leaderboard/Leaderboard';
+import SavedSession from '../server/session/SavedSession';
+import NewRecordText from '../components/NewRecordText';
 
 export default function LiveStats() {
 	const beatsaber = useBeatsaberTournamentClient();
 
 	const [state, setState] = useState<StateDTO>(beatsaber.state);
+	const [topEntries, setTopEntries] = useState<SavedSession[]>(beatsaber.leaderboard);
 
 	useEffect(() => {
 		const handleState = (newState: StateDTO) => {
 			setState(newState);
 		}
+
+		const handleLeaderboard = (newLeaderboard: SavedSession[]) => {
+			setTopEntries(newLeaderboard);
+		}
+
+
 		beatsaber.events.on(BeatsaberClientEvent.STATE_CHANGED, handleState);
+		beatsaber.events.on(BeatsaberClientEvent.LEADERBOARD_CHANGED, handleLeaderboard);
 		return () => {
 			beatsaber.events.off(BeatsaberClientEvent.STATE_CHANGED, handleState);
+			beatsaber.events.off(BeatsaberClientEvent.LEADERBOARD_CHANGED, handleLeaderboard);
 		};
 	}, []);
+
+	function shouldShowNewRecord() {
+		if (sessionActiveWithScore(state)) {
+			if (topEntries.length > 0) {
+				const top = topEntries[0];
+				if (top.score != null) {
+					if (top.score.Score > 0) {
+						if (state.current_session?.score?.Score != null) {
+							return state.current_session.score.Score > top.score.Score;
+						}
+					}
+				}
+			}
+		}
+		return false;
+	}
 
 	return (
 		<>
@@ -49,9 +76,11 @@ export default function LiveStats() {
 									Current score: <CurrentScore />
 								</h1>
 							</Col>
-							<Col xs={12} className='mt-1'>
-								<HealthBar />
-							</Col>
+							{sessionInGame(state) && <>
+								<Col xs={12} className='mt-1'>
+									<HealthBar />
+								</Col>
+							</>}
 						</Row>
 					</>
 					:
@@ -63,6 +92,14 @@ export default function LiveStats() {
 						</Row>
 					</>
 				}
+
+				{shouldShowNewRecord() && <>
+					<Row>
+						<Col>
+							<NewRecordText />
+						</Col>
+					</Row>
+				</>}
 
 				<Row className='mt-4'>
 					<Col>
