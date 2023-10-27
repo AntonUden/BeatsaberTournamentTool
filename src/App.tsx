@@ -3,6 +3,7 @@ import './App.css'
 import Start from './pages/Start'
 import LiveStats from './pages/LiveStats'
 import Admin from './pages/Admin'
+import { Toaster } from 'react-hot-toast'
 
 function App() {
 	return (
@@ -16,6 +17,8 @@ function App() {
 				{/* Error page */}
 				<Route path="*" element={<h1>404: Page not found</h1>} />
 			</Routes>
+
+			<Toaster />
 		</>
 	)
 }

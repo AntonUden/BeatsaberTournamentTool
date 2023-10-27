@@ -17,5 +17,5 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
 				<App />
 			</BrowserRouter>
 		</BeatsaberTournamentClientContext.Provider>
-	</React.StrictMode>,
+	</React.StrictMode>
 )

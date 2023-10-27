@@ -65,15 +65,13 @@ export default class BeatsaberWebsocketInterface {
         this._connected = false;
     }
 
-
-
     private onMapMessage(mapData: LevelData) {
         let newSession = false;
         if (this._currentSession == null) {
             console.log("Creating initial session");
             newSession = true;
-        } else if (mapData.UnixTimestamp != this._currentSession.level.UnixTimestamp) {
-            console.log("New session since timestamp changed");
+        } else if (!this._currentSession.level.InLevel && mapData.InLevel) {
+            console.log("New session since InLevel changed fron false to true");
             newSession = true;
         }
 
@@ -103,9 +101,8 @@ export default class BeatsaberWebsocketInterface {
                             this._currentSession.end_reason = EndReason.QUIT;
                         }
                         this._currentSession.paused = false;
+						console.log("Session ended with reason " + this._currentSession.end_reason);
                     }
-
-                    console.log("Session ended with reason " + this._currentSession.end_reason);
                 }
 
                 this._currentSession.level = mapData;
