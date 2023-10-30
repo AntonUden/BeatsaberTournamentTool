@@ -30,6 +30,10 @@ export function isTournamentSettingsMatching(settings1: TournamentSettings, sett
 		return false;
 	}
 
+	if (settings1.level_name != settings2.level_name) {
+		return false;
+	}
+
 	for (const key of Object.keys(settings1.modifiers)) {
 		if ((settings1.modifiers as any)[key] != (settings2.modifiers as any)[key]) {
 			return false;
