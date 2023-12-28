@@ -3,9 +3,12 @@ import { useBeatsaberTournamentClient } from '../scripts/context/BeatsaberClient
 import { BeatsaberClientEvent } from '../scripts/BeatsaberTournamentClient';
 import SavedSession from '../server/session/SavedSession';
 
+interface Props {
+	noneText?: string;
+	pointsByText?: string;
+}
 
-
-export default function CurrentRecord() {
+export default function CurrentRecord({noneText = "None", pointsByText = "points by"}: Props) {
 	const beatsaber = useBeatsaberTournamentClient();
 
 	const [firstPlace, setFirstPlace] = useState<SavedSession | null>(beatsaber.leaderboard.length == 0 ? null : beatsaber.leaderboard[0]);
@@ -27,10 +30,10 @@ export default function CurrentRecord() {
 	return (
 		<>
 			{firstPlace == null ?
-				<span>None</span>
+				<span>{noneText}</span>
 				:
 				<>
-					<span>{firstPlace.score?.Score}</span> points by <span>{firstPlace.user.name}</span>
+					<span>{firstPlace.score?.Score}</span> {pointsByText} <span>{firstPlace.user.name}</span>
 				</>
 			}
 		</>

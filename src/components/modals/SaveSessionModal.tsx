@@ -4,13 +4,15 @@ import { Button, Col, Container, FormControl, FormLabel, InputGroup, Modal, Moda
 import UserData from '../../server/session/UserData';
 import toast from 'react-hot-toast';
 import SettingsMissmatchWarning from '../SettingsMissmatchWarning';
+import axios from 'axios';
 
 interface Props {
 	visible: boolean;
+	clearSessionOnSubmit?: boolean;
 	onClose: () => void;
 }
 
-export default function SaveSessionModal({ visible, onClose }: Props) {
+export default function SaveSessionModal({ visible, onClose, clearSessionOnSubmit = false }: Props) {
 	const beatsaber = useBeatsaberTournamentClient();
 
 	const [submitEnable, setSubmitEnable] = useState<boolean>(true);
@@ -39,6 +41,10 @@ export default function SaveSessionModal({ visible, onClose }: Props) {
 
 		try {
 			if (await beatsaber.submitSession(contactInfo)) {
+				if(clearSessionOnSubmit) {
+					await axios.post("/api/clear_current_session");
+					await beatsaber.pollState();
+				}
 				await beatsaber.pollLeaderboard();
 				toast.success("Score saved");
 				setSubmitEnable(true);
@@ -91,7 +97,7 @@ export default function SaveSessionModal({ visible, onClose }: Props) {
 					Cancel
 				</Button>
 				<Button variant="success" disabled={!submitEnable} onClick={handleSave}>
-					Save
+					Submit
 				</Button>
 			</ModalFooter>
 		</Modal>

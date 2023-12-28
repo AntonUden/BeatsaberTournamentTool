@@ -63,6 +63,11 @@ export default class BeatsaberTournamentServer {
 			res.json({ success: true });
 		});
 
+		this._app.post('/api/clear_current_session', (_, res) => {
+			this._beatsaberInterface.currentSession = null;
+			res.json({ success: true });
+		});
+
 		this._app.delete('/api/detete_session', (req, res) => {
 			this.deleteSession(req.query.uuid as string);
 			res.json({ success: true });
@@ -116,6 +121,7 @@ export default class BeatsaberTournamentServer {
 	}
 
 	deleteSession(sessionId: string) {
+		console.log("Remove session id: " + sessionId);
 		this._savedSessions = this._savedSessions.filter(obj => obj.uuid != sessionId);
 		this.saveSessionsToFile();
 	}

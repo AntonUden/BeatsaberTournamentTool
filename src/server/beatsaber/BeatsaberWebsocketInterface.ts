@@ -41,6 +41,10 @@ export default class BeatsaberWebsocketInterface {
         return this._currentSession;
     }
 
+	set currentSession(newData: BeatsaberSession | null) {
+		this._currentSession = newData;
+	}
+
     get connected(): boolean {
         return this._connected;
     }

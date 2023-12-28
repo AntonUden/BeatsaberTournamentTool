@@ -15,6 +15,10 @@ export default function Start() {
 						<ListGroupItem>
 							<Link to="/admin">Admin page</Link>
 						</ListGroupItem>
+
+						<ListGroupItem>
+							<Link to="/unattended_se">Unattended (Swedish)</Link>
+						</ListGroupItem>
 					</ListGroup>
 				</Col>
 			</Row>

@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from 'react'
 
-export default function NewRecordText() {
+interface Props {
+	text?: string;
+}
+
+export default function NewRecordText({text = "New record!"}: Props) {
 	const [hue, setHue] = useState<number>(0)
 
 	useEffect(() => {
@@ -16,6 +20,6 @@ export default function NewRecordText() {
 	}
 
 	return (
-		<h4 style={{ color: `hsl(${hue}, 100%, 50%)` }} className='text-center'>New record!</h4>
+		<h4 style={{ color: `hsl(${hue}, 100%, 50%)` }} className='text-center'>{text}</h4>
 	)
 }
