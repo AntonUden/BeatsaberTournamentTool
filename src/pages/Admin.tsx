@@ -147,7 +147,7 @@ export default function Admin() {
 					<Col>
 						<hr />
 						<h2>Leaderboard</h2>
-						<Leaderboard entryCount={10} showContact />
+						<Leaderboard entryCount={10} showContact showDelete />
 					</Col>
 				</Row>
 

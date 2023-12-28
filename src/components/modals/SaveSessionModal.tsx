@@ -39,6 +39,7 @@ export default function SaveSessionModal({ visible, onClose }: Props) {
 
 		try {
 			if (await beatsaber.submitSession(contactInfo)) {
+				await beatsaber.pollLeaderboard();
 				toast.success("Score saved");
 				setSubmitEnable(true);
 				onClose();

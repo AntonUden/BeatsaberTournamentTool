@@ -8,9 +8,10 @@ import LeaderboardEntry from './LeaderboardEntry';
 interface Props {
 	entryCount: number;
 	showContact?: boolean;
+	showDelete?: boolean;
 }
 
-export default function Leaderboard({ entryCount, showContact }: Props) {
+export default function Leaderboard({ entryCount, showContact = false, showDelete = false }: Props) {
 	const beatsaber = useBeatsaberTournamentClient();
 
 	const [topEntries, setTopEntries] = useState<SavedSession[]>(beatsaber.leaderboard.slice(0, entryCount));
@@ -33,6 +34,7 @@ export default function Leaderboard({ entryCount, showContact }: Props) {
 					<th>Name</th>
 					{showContact && <th>Contact details</th>}
 					<th>Score</th>
+					{showDelete && <th/>}
 				</tr>
 			</thead>
 
@@ -40,14 +42,14 @@ export default function Leaderboard({ entryCount, showContact }: Props) {
 				<>
 					<tbody>
 						<tr>
-							<td colSpan={showContact ? 4 : 3}>No entries</td>
+							<td colSpan={(showContact ? 1 : 0) + (showDelete ? 1 : 0) + 3}>No entries</td>
 						</tr>
 					</tbody>
 				</>
 				:
 				<>
 					<tbody>
-						{topEntries.map((entry, index) => <LeaderboardEntry key={entry.uuid} placement={index + 1} session={entry} showContact={showContact} />)}
+						{topEntries.map((entry, index) => <LeaderboardEntry key={entry.uuid} uuid={entry.uuid} placement={index + 1} session={entry} showContact={showContact} showDelete={showDelete} />)}
 					</tbody>
 				</>
 			}

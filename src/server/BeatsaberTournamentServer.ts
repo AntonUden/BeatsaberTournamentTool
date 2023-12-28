@@ -16,16 +16,14 @@ export default class BeatsaberTournamentServer {
 	private _config: ServerConfig;
 	private _beatsaberInterface: BeatsaberWebsocketInterface;
 	private _savedSessions: SavedSession[];
-	private _tournamentSesings: TournamentSettings | null;
+	private _tournamentSettings: TournamentSettings | null;
 
 	constructor(config: ServerConfig, app: Application) {
 		console.log("Starting server");
 		this._app = app;
 		this._config = config;
 		this._savedSessions = [];
-		this._tournamentSesings = null;
-
-
+		this._tournamentSettings = null;
 
 		if (fs.existsSync("./data/scoreboard.json")) {
 			console.log("Reading old scores from ./data/scoreboard.json");
@@ -38,7 +36,7 @@ export default class BeatsaberTournamentServer {
 
 		if (fs.existsSync("./data/tournament_settings.json")) {
 			console.log("Reading settings from ./data/tournament_settings.json");
-			this._tournamentSesings = JSON.parse(fs.readFileSync("./data/tournament_settings.json", 'utf8')) as TournamentSettings;
+			this._tournamentSettings = JSON.parse(fs.readFileSync("./data/tournament_settings.json", 'utf8')) as TournamentSettings;
 		} else {
 			console.log("./data/tournament_settings.json not found");
 		}
@@ -60,16 +58,22 @@ export default class BeatsaberTournamentServer {
 		});
 
 		this._app.delete('/api/clear_settings', (_, res) => {
-			this._tournamentSesings = null;
+			this._tournamentSettings = null;
 			this.saveTournamentSettings();
 			res.json({ success: true });
+		});
+
+		this._app.delete('/api/detete_session', (req, res) => {
+			this.deleteSession(req.query.uuid as string);
+			res.json({ success: true });
+
 		});
 
 		this._app.post('/api/lock_settings', (_, res) => {
 			let result = false;
 			
 			if (this._beatsaberInterface.currentSession != null) {
-				this._tournamentSesings = tournamentSettingsFromSession(this._beatsaberInterface.currentSession);
+				this._tournamentSettings = tournamentSettingsFromSession(this._beatsaberInterface.currentSession);
 				this.saveTournamentSettings();
 				result = true;
 			}
@@ -111,6 +115,11 @@ export default class BeatsaberTournamentServer {
 		return true;
 	}
 
+	deleteSession(sessionId: string) {
+		this._savedSessions = this._savedSessions.filter(obj => obj.uuid != sessionId);
+		this.saveSessionsToFile();
+	}
+
 	saveTournamentSettings() {
 		if (this.tournamentSesings == null) {
 			if (fs.existsSync("./data/tournament_settings.json")) {
@@ -126,7 +135,7 @@ export default class BeatsaberTournamentServer {
 	}
 
 	get tournamentSesings() {
-		return this._tournamentSesings;
+		return this._tournamentSettings;
 	}
 
 	get savedSessions() {

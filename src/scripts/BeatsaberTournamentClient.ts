@@ -76,6 +76,10 @@ export default class BeatsaberTournamentClient {
 		return false;
 	}
 
+	async deleteSession(sessionId: string) {
+		await axios.delete("/api/detete_session?uuid=" + sessionId);
+	}
+
 	async clearLeaderboard() {
 		await axios.delete("/api/clear_leaderboard");
 	}
